@@ -26,11 +26,20 @@ new Phaser.Game(config)
 // this -> game -> el juego que estamos construyendo
 
 function preload () {
+
   this.load.image(
     'cloud1',
     'assets/scenery/overworld/cloud1.png'
   )
+  this.load.image(
+    'cloud2',
+    'assets/scenery/overworld/cloud2.png'
+  )
 
+  this.load.image(
+    'small-tube',
+    'assets/scenery/vertical-small-tube.png'
+  )
   this.load.image(
     'floorbricks',
     'assets/scenery/overworld/floorbricks.png'
@@ -43,6 +52,7 @@ function preload () {
   )
 
   this.load.audio('gameover', 'assets/sound/music/gameover.mp3')
+  this.load.audio('jump','assets/sound/effects/jump.mp3')
 } // 1.
 
 function create () {
@@ -50,6 +60,18 @@ function create () {
   this.add.image(100, 50, 'cloud1')
     .setOrigin(0, 0)
     .setScale(0.15)
+
+  this.add.image(200, 50, 'cloud2')
+    .setOrigin(0, 0)
+    .setScale(0.15)
+
+  this.add.image(300, 50, 'cloud2')
+    .setOrigin(0, 0)
+    .setScale(0.15)
+
+  this.add.image(50, 200, 'small-tube')
+
+  this.add.image(200, 200, 'small-tube')
 
   this.floor = this.physics.add.staticGroup()
 
@@ -60,6 +82,16 @@ function create () {
 
   this.floor
     .create(150, config.height - 16, 'floorbricks')
+    .setOrigin(0, 0.5)
+    .refreshBody()
+
+  this.floor
+    .create(300, config.height - 16, 'floorbricks')
+    .setOrigin(0, 0.5)
+    .refreshBody()
+
+  this.floor
+    .create(420, config.height - 16, 'floorbricks')
     .setOrigin(0, 0.5)
     .refreshBody()
 
@@ -97,13 +129,14 @@ function update () { // 3. continuamente
   if (this.keys.up.isDown && this.mario.body.touching.down) {
     this.mario.setVelocityY(-300)
     this.mario.anims.play('mario-jump', true)
+    this.sound.add('jump',{volume: 0.2}).play()
   }
 
   if (this.mario.y >= config.height) {
     this.mario.isDead = true
     this.mario.anims.play('mario-dead')
     this.mario.setCollideWorldBounds(false)
-    this.sound.add('gameover', { volume: 0.2 }).play()
+    this.sound.add('gameover', { volume: 0.4 }).play()
 
     setTimeout(() => {
       this.mario.setVelocityY(-350)
@@ -111,6 +144,7 @@ function update () { // 3. continuamente
 
     setTimeout(() => {
       this.scene.restart()
-    }, 2000)
+    }, 
+    3000)
   }
 }
